@@ -1,8 +1,9 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
 import { Box } from "@mui/material";
 import { Navbar } from "./Navbar";
 import { Sidebar } from "./Sidebar";
+import { useLocation } from "react-router-dom";
 
 type Props = {
     children: ReactNode
@@ -19,7 +20,12 @@ const LayoutRoot = styled('div')(({ theme }) => ({
 }));
 
 export const Layout: FC<Props> = ({ children }) => {
-    const [isSidebarOpen, setSidebarOpen] = useState(true);
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        setSidebarOpen(false)
+    }, [location])
 
     return <>
         <LayoutRoot>

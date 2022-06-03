@@ -1,17 +1,28 @@
 import { AttachMoney, Search } from "@mui/icons-material"
 import { DashboardIcon } from "../components/icons/dashboard"
+import { AddNewStock } from "./AddNewStock"
+import { Dashboard } from "./Dashboard"
+import { Investments } from "./Investments"
 
-const pagesConfig = {
-    Dashboard: {
+const pagesConfig = [
+    {
+        name: "Dashboard",
         route: "/",
-        component: <div>Dashboard</div>,
+        component: <Dashboard />,
         icon: <DashboardIcon />
     },
-    Investments: {
+    {
+        name: "Investments",
         route: "/investments",
-        component: <div>Investments</div>,
+        component: <Investments />,
         icon: <AttachMoney />
-    }
-}
+    },
+    {
+        name: "Add new Stock",
+        route: "/stocks",
+        component: <AddNewStock />,
+        icon: <AttachMoney />
+    },
+]
 
-export const routes = Object.entries(pagesConfig).map(([name, props]) => ({ name, ...props }))
+export const routes = pagesConfig

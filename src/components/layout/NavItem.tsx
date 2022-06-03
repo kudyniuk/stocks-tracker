@@ -24,7 +24,6 @@ export const NavItem: FC<Props> = ({ icon, title, href }) => {
             }}
         >
             <Button
-                component="a"
                 startIcon={icon}
                 disableRipple
                 sx={{
