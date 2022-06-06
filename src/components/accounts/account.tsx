@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 type Props = {
     name: string
     imageUrl: string
-    description: string
+    description?: string
     checked: boolean
     onClick: () => void
     divider?: boolean  

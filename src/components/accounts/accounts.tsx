@@ -33,7 +33,7 @@ const resolveImage = (name: string): string => {
 export const Accounts: FC = () => {
     const accounts = useAppSelector(state => state.accounts)
     const dispatch = useAppDispatch()
-    const selectedAll = useAppSelector(state => state.accounts.map(el => el.checked).reduce((acc, curr) => acc && curr))
+    const selectedAll = useAppSelector(state => state.accounts.map(el => el.checked).reduce((acc, curr) => acc && curr, true))
 
     const handleToggleAll = useCallback(() => {
         dispatch(toogleAllAccountSelect(!selectedAll))
@@ -52,7 +52,7 @@ export const Accounts: FC = () => {
                     name={account.name}
                     description={account.description}
                     imageUrl={resolveImage(account.icon)}
-                    checked={account.checked}
+                    checked={account.checked || false}
                     onClick={() => dispatch(toggleAccountSelect(account.id))}
                     divider={i < accounts.length - 1} />
             ))}

@@ -1,22 +1,31 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState = [
+
+export type Account = {
+    id: string
+    name: string
+    description?: string
+    icon: string
+    checked?: boolean
+}
+
+const initialState: Account[] = [
     {
-        id: 1,
+        id: "1",
         name: "MBank Makler",
         description: "Best makler ever",
         icon: "MBank",
         checked: false
     },
     {
-        id: 2,
+        id: "2",
         name: "ING",
         description: "Bank Slunski",
         icon: "ING",
         checked: false
     },
     {
-        id: 3,
+        id: "3",
         name: "XTB",
         description: "Cheak and nice",
         icon: "XTB",
@@ -27,15 +36,22 @@ const initialState = [
 
 export const accountSlice = createSlice({
     name: 'accounts',
-    initialState,
+    initialState: [] as Account[],
     reducers: {
-        toggleAccountSelect: (state, action: PayloadAction<number>) => {
-            return state.map((el) => el.id === action.payload ? {...el, checked: !el.checked} : el)
+        setAccounts: (state, action: PayloadAction<Account[]>) => {
+            return action.payload.map((account) => (
+                {
+                    ...account,
+                    checked: state.find((stateAccount) => stateAccount.id === account.id)?.checked || false
+                }))
+        },
+        toggleAccountSelect: (state, action: PayloadAction<string>) => {
+            return state.map((el) => el.id === action.payload ? { ...el, checked: !el.checked } : el)
         },
         toogleAllAccountSelect: (state, action: PayloadAction<boolean>) => {
-            return state.map(el => ({...el, checked: action.payload}))
+            return state.map(el => ({ ...el, checked: action.payload }))
         }
     },
 });
 
-export const { toggleAccountSelect, toogleAllAccountSelect } = accountSlice.actions;
+export const { setAccounts, toggleAccountSelect, toogleAllAccountSelect } = accountSlice.actions;
