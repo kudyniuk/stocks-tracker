@@ -4,6 +4,7 @@ import { AppBar, Avatar, Badge, Box, IconButton, Toolbar, Tooltip } from '@mui/m
 import { Menu as MenuIcon, Search } from '@mui/icons-material';
 import { BellIcon } from "../icons/bell";
 import { UserCircle } from "../icons/user";
+import { AccountMenu } from "../accounts/accountMenu";
 
 type Props = {
     onSidebarOpen: () => void
@@ -65,16 +66,7 @@ export const Navbar: FC<Props> = ({ onSidebarOpen }) => {
                     </Badge>
                 </IconButton>
             </Tooltip>
-            <Avatar
-                sx={{
-                    height: 40,
-                    width: 40,
-                    ml: 1
-                }}
-                src="/static/images/avatars/avatar_1.png"
-            >
-                <UserCircle fontSize="small" />
-            </Avatar>
+            <AccountMenu/>
         </Toolbar>
     </NavbarRoot>
 }
