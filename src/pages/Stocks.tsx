@@ -33,7 +33,7 @@ export const Stocks: FC = () => {
                 </TextField>
                 <TextField id="outlined-basic-1" label="Ticker" variant="standard" {...register("ticker")} />
                 <TextField id="outlined-basic-2" label="Amount" variant="standard" type="number" {...register("amount")} />
-                <TextField id="outlined-basic-3" label="Price" variant="standard" type="number" step=".01" {...register("price")} />
+                <TextField id="outlined-basic-3" label="Price" variant="standard" type="number" {...register("price")} />
                 <TextField select label="Currency" variant="standard" defaultValue={"USD"} {...register('currency')} >
                     <MenuItem value="USD">USD</MenuItem>
                     <MenuItem value="EUR">EUR</MenuItem>
