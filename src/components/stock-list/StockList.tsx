@@ -3,6 +3,7 @@ import {
     Box,
     Card,
     CardHeader,
+    IconButton,
     Table,
     TableBody,
     TableCell,
@@ -11,33 +12,34 @@ import {
     TableSortLabel,
     Tooltip
 } from '@mui/material';
-// import { SeverityPill } from '../severity-pill';
+import { useAppSelector } from '../../store/hooks';
+import { FC } from 'react';
+import { Delete, Edit } from '@mui/icons-material';
 
-const orders = [
-    {
-        ref: 'CDD1049',
-        amount: 30,
-        price: 100,
-        currency: "USD",
-        buyPrice: 90,
-        profit: '12%',
-        value: 1000
-    },
-];
 
-export const StockList = () => (
-    <Card>
+type Props = {
+    advanced?: boolean
+}
+
+export const StockList: FC<Props> = ({ advanced }) => {
+    const stocks = useAppSelector(state => state.stocks)
+    const selectedAccountsId = useAppSelector(state => state.accounts.filter(el => el.checked).map(el => el.id))
+    const accounts = useAppSelector(state => state.accounts)
+
+
+    return <Card>
         <CardHeader title="Stocks" sx={{ p: 2 }} />
         <PerfectScrollbar>
             <Box sx={{ minWidth: 800 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
+                            {advanced &&
+                                <TableCell>Account</TableCell>
+                            }
+                            <TableCell>Ticker</TableCell>
                             <TableCell>
-                                Walor
-                            </TableCell>
-                            <TableCell>
-                                Ilość
+                                Amount
                             </TableCell>
                             <TableCell sortDirection="desc">
                                 <Tooltip
@@ -61,37 +63,42 @@ export const StockList = () => (
                             <TableCell>
                                 Wartość
                             </TableCell>
+                            {advanced &&
+                                <TableCell>
+                                    Actions
+                                </TableCell>
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {orders.map((order) => (
+                        {stocks.filter(el => selectedAccountsId.includes(el.account)).map((stock) => (
                             <TableRow
                                 hover
-                                key={order.ref}
+                                key={stock.id}
                             >
-                                <TableCell>
-                                    {order.ref}
-                                </TableCell>
-                                <TableCell>
-                                    {order.amount}
-                                </TableCell>
-                                <TableCell>
-                                    {order.price} {order.currency}
-                                </TableCell>
-                                <TableCell>
-                                    {order.buyPrice} {order.currency}
-                                </TableCell>
-                                <TableCell>
-                                    {order.profit}
-                                </TableCell>
-                                <TableCell>
-                                    {order.value} {order.currency}
-                                </TableCell>
+                                {advanced && <TableCell>
+                                    {accounts.find(el => el.id === stock.account)?.name || "Unknown"}
+                                </TableCell>}
+                                <TableCell>{stock.ticker}</TableCell>
+                                <TableCell>{stock.amount}</TableCell>
+                                <TableCell>{stock.price} {stock.currency}</TableCell>
+                                <TableCell>{stock.price * stock.amount} {stock.currency}</TableCell>
+                                <TableCell>0%</TableCell>
+                                <TableCell>unknown</TableCell>
+                                {advanced && <TableCell>
+                                    <IconButton>
+                                        <Edit />
+                                    </IconButton>
+                                    <IconButton>
+                                        <Delete />
+                                    </IconButton>
+                                </TableCell>}
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </Box>
         </PerfectScrollbar>
-    </Card>
-);
+    </Card >
+}
+

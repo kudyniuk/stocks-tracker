@@ -14,6 +14,6 @@ export const userSlice = createSlice({
     },
 });
 
-export const getUUID = () => useAppSelector(state => state.user.uid)
+export const useUUID = () => useAppSelector(state => state.user.uid)
 
 export const { setUser } = userSlice.actions;

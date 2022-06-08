@@ -9,31 +9,6 @@ export type Account = {
     checked?: boolean
 }
 
-const initialState: Account[] = [
-    {
-        id: "1",
-        name: "MBank Makler",
-        description: "Best makler ever",
-        icon: "MBank",
-        checked: false
-    },
-    {
-        id: "2",
-        name: "ING",
-        description: "Bank Slunski",
-        icon: "ING",
-        checked: false
-    },
-    {
-        id: "3",
-        name: "XTB",
-        description: "Cheak and nice",
-        icon: "XTB",
-        checked: false
-    },
-]
-
-
 export const accountSlice = createSlice({
     name: 'accounts',
     initialState: [] as Account[],
