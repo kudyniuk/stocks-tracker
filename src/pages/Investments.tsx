@@ -36,7 +36,7 @@ export const Investments: FC = () => (
                         xl={9}
                         xs={12}
                     >
-                        <StockList/>
+                        <StockList filterByAccounts/>
                     </Grid>
                 </Grid>
             </Container>

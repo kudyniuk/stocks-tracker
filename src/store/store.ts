@@ -3,13 +3,18 @@ import { accountSlice } from './accounts/accountsSlice';
 import { subscribeUser } from './user/subscribeUser';
 import { userSlice } from './user/user';
 import { stocksSlice } from './stocks/stocksSlice';
+import { stockPriceApi } from './stockPriceApi/stockPriceApi';
 
 export const store = configureStore({
   reducer: {
     [accountSlice.name]: accountSlice.reducer,
     [userSlice.name]: userSlice.reducer,
-    [stocksSlice.name]: stocksSlice.reducer
+    [stocksSlice.name]: stocksSlice.reducer,
+
+    [stockPriceApi.reducerPath]: stockPriceApi.reducer
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(stockPriceApi.middleware),
 });
 
 subscribeUser(store)

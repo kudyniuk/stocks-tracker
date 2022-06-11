@@ -15,13 +15,16 @@ import {
 import { useAppSelector } from '../../store/hooks';
 import { FC } from 'react';
 import { Delete, Edit } from '@mui/icons-material';
+import { StockPrice } from './StockPrice';
+import { StockProfit } from './StockProfit';
 
 
 type Props = {
     advanced?: boolean
+    filterByAccounts?: boolean
 }
 
-export const StockList: FC<Props> = ({ advanced }) => {
+export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
     const stocks = useAppSelector(state => state.stocks)
     const selectedAccountsId = useAppSelector(state => state.accounts.filter(el => el.checked).map(el => el.id))
     const accounts = useAppSelector(state => state.accounts)
@@ -71,7 +74,7 @@ export const StockList: FC<Props> = ({ advanced }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {stocks.filter(el => selectedAccountsId.includes(el.account)).map((stock) => (
+                        {stocks.filter(el => !filterByAccounts || selectedAccountsId.includes(el.account)).map((stock) => (
                             <TableRow
                                 hover
                                 key={stock.id}
@@ -81,10 +84,14 @@ export const StockList: FC<Props> = ({ advanced }) => {
                                 </TableCell>}
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
-                                <TableCell>{stock.price} {stock.currency}</TableCell>
-                                <TableCell>{stock.price * stock.amount} {stock.currency}</TableCell>
-                                <TableCell>0%</TableCell>
-                                <TableCell>unknown</TableCell>
+                                <TableCell><StockPrice ticker={stock.ticker}/> {stock.currency}</TableCell>
+                                <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} {stock.currency}</TableCell>
+                                <TableCell>
+                                    <StockProfit ticker={stock.ticker} baseValue={stock.price}/>
+                                </TableCell>
+                                <TableCell>
+                                    <StockPrice ticker={stock.ticker} amount={stock.amount} baseValue={stock.price + stock.fee / stock.amount} /> {stock.currency}
+                                </TableCell>
                                 {advanced && <TableCell>
                                     <IconButton>
                                         <Edit />

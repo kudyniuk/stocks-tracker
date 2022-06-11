@@ -8,7 +8,8 @@ export type Stock = {
     price: number
     currency: string
     account: string
-    date: string
+    date: number
+    fee: number
 }
 
 export const stocksSlice = createSlice({
