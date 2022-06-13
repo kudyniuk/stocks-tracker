@@ -16,7 +16,7 @@ type Stock = {
 }
 
 type TickerData = {
-    lastDataRef: string
+    lastDataRef: admin.firestore.DocumentReference
     updateDate: number
 } | undefined
 
@@ -42,7 +42,12 @@ export const eod = functions.https.onRequest(async (req, res) => {
 
     const shouldUpdateData = !isToday(tickerData?.updateDate)
 
+
+    console.log("Should update data", shouldUpdateData)
+    
     if (shouldUpdateData || !tickerData?.lastDataRef) {
+        console.log("Use update data")
+
         const from = tickerData?.updateDate ? `&from=${format(new Date(tickerData.updateDate), "Y-MM-dd")}` : ""
 
         try {
@@ -73,7 +78,8 @@ export const eod = functions.https.onRequest(async (req, res) => {
             }, { merge: true })
 
             if(tickerData?.lastDataRef) {
-                const data = (await db.doc(tickerData?.lastDataRef).get()).data()
+                console.log("Error, use ref data")
+                const data = (await tickerData?.lastDataRef.get()).data()
                 res.send(data)
             } else {
                 res.statusCode = 404
@@ -81,7 +87,8 @@ export const eod = functions.https.onRequest(async (req, res) => {
             }
         }
     } else {
-        const data = (await db.doc(tickerData?.lastDataRef).get()).data()
+        console.log("Use actual data")
+        const data = (await tickerData?.lastDataRef.get()).data()
         res.send(data)
     }
 })
