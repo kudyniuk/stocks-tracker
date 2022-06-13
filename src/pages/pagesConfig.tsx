@@ -1,6 +1,6 @@
 import { AttachMoney, Search } from "@mui/icons-material"
 import { DashboardIcon } from "../components/icons/dashboard"
-import { Stocks } from "./Stocks"
+import { TransactionsHistory } from "./TransactionsHistory"
 import { Dashboard } from "./Dashboard"
 import { Investments } from "./Investments"
 
@@ -19,8 +19,8 @@ const pagesConfig = [
     },
     {
         name: "Stocks",
-        route: "/stocks",
-        component: <Stocks />,
+        route: "/transactions",
+        component: <TransactionsHistory />,
         icon: <AttachMoney />
     },
 ]

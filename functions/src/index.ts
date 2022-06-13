@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from 'firebase-admin'
-import { intervalToDuration, addDays, format, subDays } from 'date-fns'
+import { format } from 'date-fns'
 import fetch from 'node-fetch'
 
 admin.initializeApp()
@@ -15,42 +15,39 @@ type Stock = {
     volume: number
 }
 
+type TickerData = {
+    lastDataRef: string
+    updateDate: number
+} | undefined
+
 const BASE_URL = "https://eodhistoricaldata.com/api/eod/"
 const API_TOKEN = "?fmt=json&api_token=62a05c606d9d42.95369419"
 const DATE_FORMAT = "Y-MM-dd"
+
 export const eod = functions.https.onRequest(async (req, res) => {
     const ticker = (req.query.ticker as string)?.toUpperCase()
 
     console.log("Request received: ", ticker)
+
     const db = admin.firestore()
 
     if (!ticker) {
-        res.statusCode = 40
-        res.send("Please provide ticker param")
+        res.statusCode = 400
+        res.send("Please provide correct ticker")
     }
 
-    const today = new Date(format(Date.now(), DATE_FORMAT))
-    const yesterday = subDays(today, 1).getTime().toString()
 
+    const tickerDataRef = db.doc(`stocks_data/${ticker}`)
+    const tickerData = (await tickerDataRef.get()).data() as TickerData
 
-    const document = await db.collection(`stocks_data/${ticker}/eod`).doc(yesterday).get()
-    const yesterdayData = document.data()
+    const shouldUpdateData = !isToday(tickerData?.updateDate)
 
-    if (yesterdayData) {
-        console.log("Response yesterday data")
-        res.send(yesterdayData)
-        return
-    }
+    if (shouldUpdateData || !tickerData?.lastDataRef) {
+        const from = tickerData?.updateDate ? `&from=${format(new Date(tickerData.updateDate), "Y-MM-dd")}` : ""
 
-    db.collection(`stocks_data/${ticker}/eod`).orderBy('date', "desc").limit(1).get().then(async snapshots => {
-
-        if (snapshots.docs.length === 0) {
-            console.log("Download full set of data!")
-
-            const data = await fetch(BASE_URL + ticker + API_TOKEN).then((data) => data.json()) as Stock[]
-            const mapData = data.map(el => ({ ...el, date: new Date(el.date).getTime() }))
-
-            console.log("data", JSON.stringify(mapData))
+        try {
+            const actualData = await fetch(BASE_URL + ticker + API_TOKEN + from).then((data) => data.json()) as Stock[]
+            const mapData = actualData.map(normalizeData)
 
             const batch = db.batch()
 
@@ -63,38 +60,38 @@ export const eod = functions.https.onRequest(async (req, res) => {
 
             const [newest] = mapData.sort((el1, el2) => el2.date - el1.date)
 
+            const lastDataRef = db.doc(`stock_data/${ticker}/eod/${newest.date}`)
+            await db.doc(`stocks_data/${ticker}`).set({
+                lastDataRef,
+                updateDate: getToday()
+            })
+
             res.send(newest)
-            return
+        } catch (err) {
+            await db.doc(`stocks_data/${ticker}`).set({
+                updateDate: getToday()
+            }, { merge: true })
+
+            if(tickerData?.lastDataRef) {
+                const data = (await db.doc(tickerData?.lastDataRef).get()).data()
+                res.send(data)
+            } else {
+                res.statusCode = 404
+                res.send()
+            }
         }
-
-        const [data] = snapshots.docs.map(doc => doc.data()) as Stock[]
-        const { days = 0 } = intervalToDuration({ start: new Date(data.date), end: today })
-
-        console.log("Days:", days)
-
-        if (days <= 1) {
-            res.send(data)
-            return
-        }
-
-        const from = `&from=${format(addDays(parseInt(data.date), 1), "Y-MM-dd")}`
-
-        const actualData = await fetch(BASE_URL + ticker + API_TOKEN + from).then((data) => data.json()) as Stock[]
-        const mapData = actualData.map(el => ({ ...el, date: new Date(el.date).getTime() }))
-
-        const batch = db.batch()
-
-        mapData.forEach(el => {
-            const ref = db.collection(`stocks_data/${ticker}/eod`).doc(el.date.toString())
-            batch.set(ref, el)
-        })
-
-        batch.commit()
-
-        const [newest] = mapData.sort((el1, el2) => el1.date - el2.date)
-
-        res.send(newest)
-        return
-    })
-
+    } else {
+        const data = (await db.doc(tickerData?.lastDataRef).get()).data()
+        res.send(data)
+    }
 })
+
+const isToday = (timestamp?: number): boolean => {
+    return getToday() === timestamp
+}
+
+const getToday = (): number => {
+    return new Date(format(Date.now(), DATE_FORMAT)).getTime()
+}
+
+const normalizeData = (el: Stock) => ({ ...el, date: new Date(el.date).getTime() })

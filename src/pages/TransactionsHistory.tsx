@@ -3,6 +3,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { FC } from "react"
 import { Controller, useForm } from "react-hook-form";
 import { StockList } from "../components/stock-list/StockList";
+import { TransactionsList } from "../components/transactions-list/TransactionsList";
 import { db } from "../firebase/init";
 import { useAppSelector } from "../store/hooks";
 import { Stock } from "../store/stocks/stocksSlice";
@@ -18,8 +19,7 @@ type FormData = {
     fee: string
 }
 
-
-export const Stocks: FC = () => {
+export const TransactionsHistory: FC = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
     const accounts = useAppSelector(state => state.accounts)
     const uuid = useUUID()
@@ -43,7 +43,7 @@ export const Stocks: FC = () => {
     }
 
     return <Box sx={{ m: 2}}>
-        <StockList advanced />
+        <TransactionsList/>
 
         <Card sx={{mt: 2, px: 2.5, py: 2 }}>
             <Stack component="form" direction="row" spacing={2} onSubmit={handleSubmit(onSubmit)}>
@@ -52,7 +52,7 @@ export const Stocks: FC = () => {
                 </TextField>
                 <TextField id="outlined-basic-1" label="Ticker" variant="standard" {...register("ticker")} />
                 <TextField id="outlined-basic-2" label="Amount" variant="standard" type="number" {...register("amount")} />
-                <TextField id="outlined-basic-3" label="Price" variant="standard" type="number" {...register("price")} />
+                <TextField id="outlined-basic-3" label="Price" variant="standard" type="number" inputProps={{step: "0.01"}} {...register("price")} />
                 <TextField id="outlined-basic-4" label="Fee" variant="standard" type="number" inputProps={{step: "0.01"}} {...register("fee")} />
                 <TextField select label="Currency" variant="standard" defaultValue={"USD"} {...register('currency')} >
                     <MenuItem value="USD">USD</MenuItem>

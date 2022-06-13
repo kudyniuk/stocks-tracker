@@ -1,3 +1,5 @@
+
+import { useAppSelector } from '../../store/hooks';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
     Box,
@@ -12,55 +14,26 @@ import {
     TableSortLabel,
     Tooltip
 } from '@mui/material';
-import { useAppSelector } from '../../store/hooks';
-import { FC } from 'react';
+import { StockPrice } from '../stock-list/StockPrice';
+import { StockProfit } from '../stock-list/StockProfit';
 import { Delete, Edit } from '@mui/icons-material';
-import { StockPrice } from './StockPrice';
-import { StockProfit } from './StockProfit';
-import { Stock } from '../../store/stocks/stocksSlice'
+import { format } from 'date-fns'
 
-type Props = {
-    advanced?: boolean
-    filterByAccounts?: boolean
-}
-
-export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
-    const rawStocks = useAppSelector(state => state.stocks)
-    const selectedAccountsId = useAppSelector(state => state.accounts.filter(el => el.checked).map(el => el.id))
+export const TransactionsList = () => {
+    const stocks = useAppSelector(state => state.stocks)
     const accounts = useAppSelector(state => state.accounts)
 
-    const stocksGrouped = Object.entries(rawStocks.reduce((acc, el) => {
-        const values = acc[el.ticker] || []
-        acc[el.ticker] = [...values, el]
-        return acc
-    }, {} as {[key: string]: Stock[]})).map(([ticker, group]) => {
-        return group.reduce((acc, el) => ({
-            ...acc,
-            amount: acc.amount + el.amount,
-            fee: acc.fee + el.fee,
-            price: (acc.price * acc.amount + el.price * el.amount) / (acc.amount + el.amount)
-        }))
-    })
-
-    const stocks = advanced ? rawStocks : stocksGrouped
-
-
-    console.log(stocksGrouped)
-
     return <Card>
-        <CardHeader title="Stocks" sx={{ p: 2 }} />
+        <CardHeader title="Transactions History" sx={{ p: 2 }} />
         <PerfectScrollbar>
             <Box sx={{ minWidth: 800 }}>
-                <Table>
+                <Table size='small'>
                     <TableHead>
                         <TableRow>
-                            {advanced &&
-                                <TableCell>Account</TableCell>
-                            }
+                            <TableCell>Date</TableCell>
+                            <TableCell>Account</TableCell>
                             <TableCell>Ticker</TableCell>
-                            <TableCell>
-                                Amount
-                            </TableCell>
+                            <TableCell>Amount</TableCell>
                             <TableCell sortDirection="desc">
                                 <Tooltip
                                     enterDelay={300}
@@ -70,35 +43,32 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
                                         active
                                         direction="desc"
                                     >
-                                        Kurs
+                                        Price
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
                             <TableCell>
-                                Średni koszt nabycia
+                                Avg. buy price
                             </TableCell>
                             <TableCell>
-                                Zysk/Strata
+                                Profit %
                             </TableCell>
                             <TableCell>
-                                Wartość
+                                Total Price
                             </TableCell>
-                            {advanced &&
-                                <TableCell>
-                                    Actions
-                                </TableCell>
-                            }
+                            <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {stocks.filter(el => !filterByAccounts || selectedAccountsId.includes(el.account)).map((stock) => (
+                        {stocks.map((stock) => (
                             <TableRow
                                 hover
                                 key={stock.id}
                             >
-                                {advanced && <TableCell>
+                                <TableCell>{format(new Date(stock.date), 'dd-MM-Y')}</TableCell>
+                                <TableCell>
                                     {accounts.find(el => el.id === stock.account)?.name || "Unknown"}
-                                </TableCell>}
+                                </TableCell>
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
                                 <TableCell><StockPrice ticker={stock.ticker} /> {stock.currency}</TableCell>
@@ -109,20 +79,19 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
                                 <TableCell>
                                     <StockPrice ticker={stock.ticker} amount={stock.amount} baseValue={stock.price + stock.fee / stock.amount} /> {stock.currency}
                                 </TableCell>
-                                {advanced && <TableCell>
+                                <TableCell>
                                     <IconButton>
                                         <Edit />
                                     </IconButton>
                                     <IconButton>
                                         <Delete />
                                     </IconButton>
-                                </TableCell>}
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </Box>
         </PerfectScrollbar>
-    </Card >
+    </Card>
 }
-
