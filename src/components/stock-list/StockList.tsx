@@ -18,6 +18,7 @@ import { Delete, Edit } from '@mui/icons-material';
 import { StockPrice } from './StockPrice';
 import { StockProfit } from './StockProfit';
 import { Stock } from '../../store/stocks/stocksSlice'
+import { Currency } from '../../hooks/useCurrencyPrice';
 
 type Props = {
     advanced?: boolean
@@ -33,7 +34,7 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
         const values = acc[el.ticker] || []
         acc[el.ticker] = [...values, el]
         return acc
-    }, {} as {[key: string]: Stock[]})).map(([ticker, group]) => {
+    }, {} as { [key: string]: Stock[] })).map(([ticker, group]) => {
         return group.reduce((acc, el) => ({
             ...acc,
             amount: acc.amount + el.amount,
@@ -101,13 +102,13 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
                                 </TableCell>}
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
-                                <TableCell><StockPrice ticker={stock.ticker} /> {stock.currency}</TableCell>
+                                <TableCell><StockPrice ticker={stock.ticker} currency={stock.currency}/></TableCell>
                                 <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} {stock.currency}</TableCell>
                                 <TableCell>
-                                    <StockProfit ticker={stock.ticker} baseValue={stock.price} />
+                                    <StockProfit ticker={stock.ticker} baseValue={stock.price} currency={stock.currency as Currency} />
                                 </TableCell>
                                 <TableCell>
-                                    <StockPrice ticker={stock.ticker} amount={stock.amount} baseValue={stock.price + stock.fee / stock.amount} /> {stock.currency}
+                                    <StockPrice ticker={stock.ticker} amount={stock.amount} baseValue={stock.price + stock.fee / stock.amount} currency={stock.currency}/>
                                 </TableCell>
                                 {advanced && <TableCell>
                                     <IconButton>

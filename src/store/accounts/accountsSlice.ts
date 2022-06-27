@@ -17,7 +17,7 @@ export const accountSlice = createSlice({
             return action.payload.map((account) => (
                 {
                     ...account,
-                    checked: state.find((stateAccount) => stateAccount.id === account.id)?.checked || false
+                    checked: state.find((stateAccount) => stateAccount.id === account.id)?.checked || true
                 }))
         },
         toggleAccountSelect: (state, action: PayloadAction<string>) => {

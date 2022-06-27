@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Currency } from '../../hooks/useCurrencyPrice';
 
 
 export type Stock = {
@@ -6,7 +7,7 @@ export type Stock = {
     ticker: string
     amount: number
     price: number
-    currency: string
+    currency: Currency
     account: string
     date: number
     fee: number

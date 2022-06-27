@@ -44,7 +44,7 @@ export const eod = functions.https.onRequest(async (req, res) => {
 
 
     console.log("Should update data", shouldUpdateData)
-    
+
     if (shouldUpdateData || !tickerData?.lastDataRef) {
         console.log("Use update data")
 
@@ -65,7 +65,7 @@ export const eod = functions.https.onRequest(async (req, res) => {
 
             const [newest] = mapData.sort((el1, el2) => el2.date - el1.date)
 
-            const lastDataRef = db.doc(`stock_data/${ticker}/eod/${newest.date}`)
+            const lastDataRef = db.doc(`stocks_data/${ticker}/eod/${newest.date}`)
             await db.doc(`stocks_data/${ticker}`).set({
                 lastDataRef,
                 updateDate: getToday()
@@ -87,8 +87,8 @@ export const eod = functions.https.onRequest(async (req, res) => {
             }
         }
     } else {
-        console.log("Use actual data")
         const data = (await tickerData?.lastDataRef.get()).data()
+        console.log("Use actual data", data)
         res.send(data)
     }
 })

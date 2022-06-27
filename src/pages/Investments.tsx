@@ -1,6 +1,7 @@
 import { Box, Container, Grid } from '@mui/material';
 import { FC, useReducer } from 'react';
 import { Accounts } from '../components/accounts/accounts';
+import { InvestmentResult } from '../components/result/InvestmentResult';
 import { StockList } from '../components/stock-list/StockList';
 
 export const Investments: FC = () => (
@@ -12,7 +13,7 @@ export const Investments: FC = () => (
             component="main"
             sx={{
                 flexGrow: 1,
-                py: 3
+                py: 2
             }}
         >
             <Container maxWidth={false}>
@@ -27,7 +28,10 @@ export const Investments: FC = () => (
                         xl={3}
                         xs={12}
                     >
-                        <Accounts /*sx={{ height: '100%' }}*/ />
+                        <Accounts />
+                        <Box sx={{py: 3}}>
+                            <InvestmentResult/>
+                        </Box>
                     </Grid>
                     <Grid
                         item

@@ -18,9 +18,16 @@ import { StockPrice } from '../stock-list/StockPrice';
 import { StockProfit } from '../stock-list/StockProfit';
 import { Delete, Edit } from '@mui/icons-material';
 import { format } from 'date-fns'
+import { useState } from 'react';
 
 export const TransactionsList = () => {
+    const [sortByDate, setSortByDate] = useState<"desc" | "asc">("desc")
+
     const stocks = useAppSelector(state => state.stocks)
+    const sortedStocks = [...stocks].sort((el1, el2) => sortByDate === 'desc'
+        ? el1.date - el2.date
+        : el2.date - el1.date
+    )
     const accounts = useAppSelector(state => state.accounts)
 
     return <Card>
@@ -30,23 +37,24 @@ export const TransactionsList = () => {
                 <Table size='small'>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Account</TableCell>
-                            <TableCell>Ticker</TableCell>
-                            <TableCell>Amount</TableCell>
-                            <TableCell sortDirection="desc">
+                            <TableCell sortDirection={sortByDate}>
                                 <Tooltip
                                     enterDelay={300}
-                                    title="Sort"
+                                    title="Sort by date"
                                 >
                                     <TableSortLabel
                                         active
-                                        direction="desc"
+                                        direction={sortByDate}
+                                        onClick={() => setSortByDate(sortByDate === "desc" ? "asc" : "desc")}
                                     >
-                                        Price
+                                        Date
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
+                            <TableCell>Account</TableCell>
+                            <TableCell>Ticker</TableCell>
+                            <TableCell>Amount</TableCell>
+                            <TableCell>Price</TableCell>
                             <TableCell>
                                 Avg. buy price
                             </TableCell>
@@ -60,7 +68,7 @@ export const TransactionsList = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {stocks.map((stock) => (
+                        {sortedStocks.map((stock) => (
                             <TableRow
                                 hover
                                 key={stock.id}
@@ -71,13 +79,13 @@ export const TransactionsList = () => {
                                 </TableCell>
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
-                                <TableCell><StockPrice ticker={stock.ticker} /> {stock.currency}</TableCell>
-                                <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} {stock.currency}</TableCell>
+                                <TableCell><StockPrice ticker={stock.ticker} currency={stock.currency} /></TableCell>
+                                <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} PLN</TableCell>
                                 <TableCell>
-                                    <StockProfit ticker={stock.ticker} baseValue={stock.price} />
+                                    <StockProfit ticker={stock.ticker} baseValue={stock.price} currency={stock.currency} />
                                 </TableCell>
                                 <TableCell>
-                                    <StockPrice ticker={stock.ticker} amount={stock.amount} baseValue={stock.price + stock.fee / stock.amount} /> {stock.currency}
+                                    <StockPrice ticker={stock.ticker} amount={stock.amount} baseValue={stock.price + stock.fee / stock.amount} currency={stock.currency} />
                                 </TableCell>
                                 <TableCell>
                                     <IconButton>
