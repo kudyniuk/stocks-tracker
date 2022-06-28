@@ -1,14 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-export type Stock = {
-    date: string
-    open: number
-    high: number
-    low: number
-    close: number
-    adjusted_close: number
-    volume: number
-}
+import { StockPrice } from './stock-types'
 
 export const stockPriceApi = createApi({
     reducerPath: "stockPriceApi",
@@ -17,7 +8,7 @@ export const stockPriceApi = createApi({
         return headers
     }}),
     endpoints: builder => ({
-        getStockPrice: builder.query<Stock, string>({
+        getStockPrice: builder.query<StockPrice, string>({
             query: (name) => `eod?ticker=${name}`
         })
     })

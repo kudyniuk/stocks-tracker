@@ -1,23 +1,15 @@
 import { Box } from "@mui/material"
 import { FC } from "react"
-import { Currency, useCurrencyPrice } from "../../hooks/useCurrencyPrice"
-import { useGetStockPriceQuery } from "../../store/stockPriceApi/stockPriceApi"
+import { Stock } from "../../store"
 
 type Props = {
-    ticker: string
-    baseValue: number
-    currency: Currency
+    stock: Stock
 }
 
-export const StockProfit: FC<Props> = ({ticker, baseValue, currency}) => {
-    const {data, error, isLoading} = useGetStockPriceQuery(ticker)
-    const currencyFetch = useCurrencyPrice(currency)
+export const StockProfit: FC<Props> = (props) => {
+    const {close, currencyPrice, price} = props.stock
 
-    if(isLoading || currencyFetch.isLoading) {
-        return <>...</>
-    }
-
-    const profit = Number(((data?.close || 0) * currencyFetch.value) / baseValue * 100 - 100)
+    const profit = Number((close * currencyPrice) / price * 100 - 100)
 
     return <Box sx={{color: profit >= 0 ? "green" : "red", fontWeight: 'bold'}}>
         {profit.toFixed(2)} %

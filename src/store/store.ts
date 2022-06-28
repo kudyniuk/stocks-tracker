@@ -3,7 +3,7 @@ import { accountSlice } from './accounts/accountsSlice';
 import { subscribeUser } from './user/subscribeUser';
 import { userSlice } from './user/user';
 import { stocksSlice } from './stocks/stocksSlice';
-import { stockPriceApi } from './stockPriceApi/stockPriceApi';
+import { stockPriceApi } from './stocks/stockPriceApi';
 
 export const store = configureStore({
   reducer: {

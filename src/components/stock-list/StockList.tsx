@@ -17,8 +17,8 @@ import { FC } from 'react';
 import { Delete, Edit } from '@mui/icons-material';
 import { StockPrice } from './StockPrice';
 import { StockProfit } from './StockProfit';
-import { Stock } from '../../store/stocks/stocksSlice'
-import { Currency } from '../../hooks/useCurrencyPrice';
+import { Stock } from '../../store/stocks/stock-types';
+import { StockTotalPrice } from './StockTotalPrice';
 
 type Props = {
     advanced?: boolean
@@ -44,9 +44,6 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
     })
 
     const stocks = advanced ? rawStocks : stocksGrouped
-
-
-    console.log(stocksGrouped)
 
     return <Card>
         <CardHeader title="Stocks" sx={{ p: 2 }} />
@@ -102,13 +99,13 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
                                 </TableCell>}
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
-                                <TableCell><StockPrice ticker={stock.ticker} currency={stock.currency}/></TableCell>
-                                <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} {stock.currency}</TableCell>
+                                <TableCell><StockPrice stock={stock}/></TableCell>
+                                <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} PLN</TableCell>
                                 <TableCell>
-                                    <StockProfit ticker={stock.ticker} baseValue={stock.price} currency={stock.currency as Currency} />
+                                    <StockProfit stock={stock} />
                                 </TableCell>
                                 <TableCell>
-                                    <StockPrice ticker={stock.ticker} amount={stock.amount} baseValue={stock.price + stock.fee / stock.amount} currency={stock.currency}/>
+                                    <StockTotalPrice stock={stock}/>
                                 </TableCell>
                                 {advanced && <TableCell>
                                     <IconButton>

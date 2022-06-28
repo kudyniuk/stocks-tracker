@@ -1,10 +1,11 @@
 import { FC, ReactNode, useEffect } from "react";
-import { useAppDispatch } from "./hooks";
+import { useAppDispatch, useAppSelector } from "./hooks";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/init";
 import { useUUID } from "./user/user";
 import { Account, setAccounts } from "./accounts/accountsSlice";
-import { setStocks, Stock } from "./stocks/stocksSlice";
+import { loadStocks } from "./stocks/stocksSlice";
+import { StockTransaction } from "./stocks/stock-types";
 
 type Props = {
     children: ReactNode
@@ -23,11 +24,10 @@ export const DataLoader: FC<Props> = ({ children }) => {
     )
 
     useEffect(() => onSnapshot(collection(db, "user_data", uuid, "stocks"), (snapshot) => {
-        const stocks = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})) as unknown as Stock[]
+        const stocks = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})) as unknown as StockTransaction[]
         console.log("Stocks loaded", stocks)
-        dispatch(setStocks(stocks))
+        dispatch(loadStocks(stocks))
     }), [uuid])
-
 
     return <>{children}</>
 }

@@ -1,19 +1,18 @@
 import { Box, Button, Card, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material"
 import { addDoc, collection } from "firebase/firestore";
 import { FC } from "react"
-import { Controller, useForm } from "react-hook-form";
-import { StockList } from "../components/stock-list/StockList";
+import { useForm } from "react-hook-form";
 import { TransactionsList } from "../components/transactions-list/TransactionsList";
 import { db } from "../firebase/init";
 import { useAppSelector } from "../store/hooks";
-import { Stock } from "../store/stocks/stocksSlice";
+import { Currency, StockTransaction } from "../store/stocks/stock-types";
 import { useUUID } from "../store/user/user";
 
 type FormData = {
     ticker: string
     amount: string
     price: string
-    currency: string
+    currency: Currency
     account: string
     date: string
     fee: string
@@ -25,7 +24,7 @@ export const TransactionsHistory: FC = () => {
     const uuid = useUUID()
 
     const onSubmit = (data: FormData) => {
-        const stockData: Omit<Stock, 'id'> = {
+        const stockData: Omit<StockTransaction, 'id'> = {
             ...data,
             fee: parseFloat(data.fee),
             price: parseFloat(data.price),
