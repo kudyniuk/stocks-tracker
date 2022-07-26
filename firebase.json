@@ -17,6 +17,14 @@
     ],
     "predeploy": [
       "yarn build"
-    ]
+    ],
+    "rewrites": [ {
+      "source": "/api/eod",
+      "function": "eod"
+    },
+    {
+      "source": "**",
+      "destination": "/index.html"
+    } ]
   }
 }
