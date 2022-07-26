@@ -21,10 +21,26 @@ type TickerData = {
 } | undefined
 
 const BASE_URL = "https://eodhistoricaldata.com/api/eod/"
+
 const API_TOKEN = "?fmt=json&api_token=62a05c606d9d42.95369419"
+const API_TOKEN2 = "?fmt=json&api_token=62bb06766b2d74.48368812"
+
 const DATE_FORMAT = "Y-MM-dd"
 
 export const eod = functions.https.onRequest(async (req, res) => {
+    try {
+        await getEod(API_TOKEN2)(req, res)
+    } catch {
+        try {
+            await getEod(API_TOKEN)(req, res)
+        } catch {
+            res.send({})
+        }
+    }
+})
+
+
+const getEod = (TOKEN: string) => async (req: functions.https.Request, res: functions.Response) => {
     const ticker = (req.query.ticker as string)?.toUpperCase()
 
     console.log("Request received: ", ticker)
@@ -51,7 +67,7 @@ export const eod = functions.https.onRequest(async (req, res) => {
         const from = tickerData?.updateDate ? `&from=${format(new Date(tickerData.updateDate), "Y-MM-dd")}` : ""
 
         try {
-            const actualData = await fetch(BASE_URL + ticker + API_TOKEN + from).then((data) => data.json()) as Stock[]
+            const actualData = await fetch(BASE_URL + ticker + TOKEN + from).then((data) => data.json()) as Stock[]
             const mapData = actualData.map(normalizeData)
 
             const batch = db.batch()
@@ -77,13 +93,13 @@ export const eod = functions.https.onRequest(async (req, res) => {
                 updateDate: getToday()
             }, { merge: true })
 
-            if(tickerData?.lastDataRef) {
+            if (tickerData?.lastDataRef) {
                 console.log("Error, use ref data")
                 const data = (await tickerData?.lastDataRef.get()).data()
                 res.send(data)
             } else {
-                res.statusCode = 404
-                res.send()
+                console.log("Throw error", TOKEN)
+                throw new Error("Not found, API overloaded")
             }
         }
     } else {
@@ -91,7 +107,7 @@ export const eod = functions.https.onRequest(async (req, res) => {
         console.log("Use actual data", data)
         res.send(data)
     }
-})
+}
 
 const isToday = (timestamp?: number): boolean => {
     return getToday() === timestamp
