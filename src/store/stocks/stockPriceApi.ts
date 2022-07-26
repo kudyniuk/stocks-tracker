@@ -3,7 +3,7 @@ import { StockPrice } from './stock-types'
 
 export const stockPriceApi = createApi({
     reducerPath: "stockPriceApi",
-    baseQuery: fetchBaseQuery({baseUrl: "/api/stocks-tracker-dev/us-central1/", prepareHeaders: (headers) => {
+    baseQuery: fetchBaseQuery({baseUrl: "/api/", prepareHeaders: (headers) => {
         headers.set("Accept", 'application/json')
         return headers
     }}),

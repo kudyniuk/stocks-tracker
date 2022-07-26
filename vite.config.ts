@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: 'http://localhost:5001',
+        target: 'https://us-central1-stocks-tracker-dev.cloudfunctions.net/',
         changeOrigin: true,
         rewrite: (path) => {
           console.log("Path", path)

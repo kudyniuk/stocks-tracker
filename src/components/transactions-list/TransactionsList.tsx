@@ -19,6 +19,7 @@ import { StockProfit } from '../stock-list/StockProfit';
 import { Delete, Edit } from '@mui/icons-material';
 import { format } from 'date-fns'
 import { useState } from 'react';
+import { StockTotalPrice } from '../stock-list/StockTotalPrice';
 
 export const TransactionsList = () => {
     const [sortByDate, setSortByDate] = useState<"desc" | "asc">("desc")
@@ -79,13 +80,13 @@ export const TransactionsList = () => {
                                 </TableCell>
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
-                                <TableCell><StockPrice ticker={stock.ticker} currency={stock.currency} /></TableCell>
+                                <TableCell><StockPrice stock={stock}/></TableCell>
                                 <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} PLN</TableCell>
                                 <TableCell>
-                                    <StockProfit ticker={stock.ticker} baseValue={stock.price} currency={stock.currency} />
+                                    <StockProfit stock={stock} />
                                 </TableCell>
                                 <TableCell>
-                                    <StockPrice ticker={stock.ticker} amount={stock.amount} baseValue={stock.price + stock.fee / stock.amount} currency={stock.currency} />
+                                    <StockTotalPrice stock={stock}  />
                                 </TableCell>
                                 <TableCell>
                                     <IconButton>

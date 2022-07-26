@@ -30,7 +30,7 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
     const selectedAccountsId = useAppSelector(state => state.accounts.filter(el => el.checked).map(el => el.id))
     const accounts = useAppSelector(state => state.accounts)
 
-    const stocksGrouped = Object.entries(rawStocks.reduce((acc, el) => {
+    const stocksGrouped = Object.entries(rawStocks.filter(el => !filterByAccounts || selectedAccountsId.includes(el.account)).reduce((acc, el) => {
         const values = acc[el.ticker] || []
         acc[el.ticker] = [...values, el]
         return acc
