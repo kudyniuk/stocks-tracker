@@ -1,5 +1,5 @@
 
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
     Box,
@@ -18,13 +18,20 @@ import { StockPrice } from '../stock-list/StockPrice';
 import { StockProfit } from '../stock-list/StockProfit';
 import { Delete, Edit } from '@mui/icons-material';
 import { format } from 'date-fns'
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { StockTotalPrice } from '../stock-list/StockTotalPrice';
+import { openEditStockModal } from '../modals/edit-stock/edit-stock-modal';
+import { openDeleteStockModal } from '../modals/delete-stock/delete-stock-modal';
 
-export const TransactionsList = () => {
+type Props = {
+    ticker?: string
+}
+
+export const TransactionsList: FC<Props> = ({ ticker = "" }) => {
     const [sortByDate, setSortByDate] = useState<"desc" | "asc">("desc")
-
-    const stocks = useAppSelector(state => state.stocks)
+    const dispatch = useAppDispatch()
+    
+    const stocks = useAppSelector(state => state.stocks.filter(stock => stock.ticker.includes(ticker)))
     const sortedStocks = [...stocks].sort((el1, el2) => sortByDate === 'desc'
         ? el1.date - el2.date
         : el2.date - el1.date
@@ -80,19 +87,19 @@ export const TransactionsList = () => {
                                 </TableCell>
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
-                                <TableCell><StockPrice stock={stock}/></TableCell>
+                                <TableCell><StockPrice stock={stock} /></TableCell>
                                 <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} PLN</TableCell>
                                 <TableCell>
                                     <StockProfit stock={stock} />
                                 </TableCell>
                                 <TableCell>
-                                    <StockTotalPrice stock={stock}  />
+                                    <StockTotalPrice stock={stock} />
                                 </TableCell>
                                 <TableCell>
-                                    <IconButton>
+                                    <IconButton onClick={() => dispatch(openEditStockModal({ticker: stock.ticker}))}>
                                         <Edit />
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton onClick={() => dispatch(openDeleteStockModal({stockId: stock.id}))}>
                                         <Delete />
                                     </IconButton>
                                 </TableCell>

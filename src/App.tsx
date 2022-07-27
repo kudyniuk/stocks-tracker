@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { Auth } from './pages/Auth'
 import { routes } from './pages/pagesConfig'
+import { StockDetails } from './pages/StockDetails'
 import { DataLoader } from './store/DataLoader'
 import { store } from './store/store'
 import { theme } from './theme'
@@ -19,6 +20,7 @@ export const App: FC = () => {
           <Layout>
             <Routes>
               {routes.map(page => <Route key={page.name} path={page.route} element={page.component} />)}
+              <Route path="stocks/:ticker" element={<StockDetails/>} />
             </Routes>
           </Layout>
           </DataLoader>

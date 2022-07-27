@@ -4,12 +4,14 @@ import { subscribeUser } from './user/subscribeUser';
 import { userSlice } from './user/user';
 import { stocksSlice } from './stocks/stocksSlice';
 import { stockPriceApi } from './stocks/stockPriceApi';
+import { modalSlice } from './modal/modalSlice';
 
 export const store = configureStore({
   reducer: {
     [accountSlice.name]: accountSlice.reducer,
     [userSlice.name]: userSlice.reducer,
     [stocksSlice.name]: stocksSlice.reducer,
+    [modalSlice.name]: modalSlice.reducer,
 
     [stockPriceApi.reducerPath]: stockPriceApi.reducer
   },

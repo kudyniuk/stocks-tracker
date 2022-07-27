@@ -19,6 +19,7 @@ import { StockPrice } from './StockPrice';
 import { StockProfit } from './StockProfit';
 import { Stock } from '../../store/stocks/stock-types';
 import { StockTotalPrice } from './StockTotalPrice';
+import { Link, useNavigate } from 'react-router-dom';
 
 type Props = {
     advanced?: boolean
@@ -29,6 +30,7 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
     const rawStocks = useAppSelector(state => state.stocks)
     const selectedAccountsId = useAppSelector(state => state.accounts.filter(el => el.checked).map(el => el.id))
     const accounts = useAppSelector(state => state.accounts)
+    const navigate = useNavigate();
 
     const stocksGrouped = Object.entries(rawStocks.filter(el => !filterByAccounts || selectedAccountsId.includes(el.account)).reduce((acc, el) => {
         const values = acc[el.ticker] || []
@@ -93,19 +95,20 @@ export const StockList: FC<Props> = ({ advanced, filterByAccounts }) => {
                             <TableRow
                                 hover
                                 key={stock.id}
+                                onClick={() => navigate(`/stocks/${stock.ticker}`)}
                             >
                                 {advanced && <TableCell>
                                     {accounts.find(el => el.id === stock.account)?.name || "Unknown"}
                                 </TableCell>}
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
-                                <TableCell><StockPrice stock={stock}/></TableCell>
+                                <TableCell><StockPrice stock={stock} /></TableCell>
                                 <TableCell>{Number(stock.price + stock.fee / stock.amount).toFixed(2)} PLN</TableCell>
                                 <TableCell>
                                     <StockProfit stock={stock} />
                                 </TableCell>
                                 <TableCell>
-                                    <StockTotalPrice stock={stock}/>
+                                    <StockTotalPrice stock={stock} />
                                 </TableCell>
                                 {advanced && <TableCell>
                                     <IconButton>

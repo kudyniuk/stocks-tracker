@@ -2,8 +2,6 @@ import { Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
 import { FC } from "react";
 import { useAppSelector } from "../../store/hooks";
 
-
-
 export const InvestmentResult: FC = () => {
     const stocks = useAppSelector((state) => state.stocks)
     const stocksPrice = stocks.reduce((acc, stock) => acc + stock.price * stock.amount + stock.fee, 0)

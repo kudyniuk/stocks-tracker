@@ -12,17 +12,17 @@ const pagesConfig = [
         icon: <DashboardIcon />
     },
     {
-        name: "Investments",
-        route: "/investments",
+        name: "Stocks",
+        route: "/stocks",
         component: <Investments />,
         icon: <AttachMoney />
     },
     {
-        name: "Stocks",
+        name: "Transactions",
         route: "/transactions",
         component: <TransactionsHistory />,
         icon: <AttachMoney />
-    },
+    }
 ]
 
 export const routes = pagesConfig

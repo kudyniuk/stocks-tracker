@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { Navbar } from "./Navbar";
 import { Sidebar } from "./Sidebar";
 import { useLocation } from "react-router-dom";
+import { ModalController } from "../modals/modal-service";
 
 type Props = {
     children: ReactNode
@@ -43,5 +44,6 @@ export const Layout: FC<Props> = ({ children }) => {
         <Navbar onSidebarOpen={() => setSidebarOpen(true)} />
         <Sidebar onClose={() => setSidebarOpen(false)}
             open={isSidebarOpen} />
+        <ModalController/>
     </>
 }
