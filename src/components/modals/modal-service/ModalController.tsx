@@ -5,11 +5,12 @@ import { closeModal } from "../../../store/modal/modalSlice";
 import { getModal } from "./registerModal";
 
 export const ModalController: FC = () => {
-    const { open, modalId, props } = useAppSelector(state => state.modal)
+    const { open, modalId, props, options } = useAppSelector(state => state.modal)
+    const { notCloseOnClickOutside } = options
     const dispatch = useAppDispatch()
 
     const handleClose = () => {
-        dispatch(closeModal())
+        !notCloseOnClickOutside && dispatch(closeModal())
     }
 
     const ModalBody = getModal(modalId!)
@@ -21,7 +22,7 @@ export const ModalController: FC = () => {
         aria-describedby="modal-modal-description"
     >
         <Box sx={style}>
-            <ModalBody {...props} close={handleClose}/>
+            <ModalBody {...props} close={handleClose} />
         </Box>
     </Modal>
 }
@@ -36,4 +37,4 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-  };
+};
