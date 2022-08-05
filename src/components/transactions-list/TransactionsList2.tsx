@@ -22,16 +22,17 @@ import { FC, useState } from 'react';
 import { StockTotalPrice } from '../stock-list/StockTotalPrice';
 import { openEditStockModal } from '../modals/edit-stock/edit-stock-modal';
 import { openDeleteStockModal } from '../modals/delete-stock/delete-stock-modal';
+import { Stock } from '../../store';
 
 type Props = {
-    ticker?: string
+    stocks: Stock[]
+    disableAccountsColumn?: boolean
 }
 
-export const TransactionsList: FC<Props> = ({ ticker = "" }) => {
+export const TransactionsList2: FC<Props> = ({ stocks, disableAccountsColumn }) => {
     const [sortByDate, setSortByDate] = useState<"desc" | "asc">("desc")
     const dispatch = useAppDispatch()
     
-    const stocks = useAppSelector(state => state.stocks.filter(stock => stock.ticker.includes(ticker)))
     const sortedStocks = [...stocks].sort((el1, el2) => sortByDate === 'desc'
         ? el1.date - el2.date
         : el2.date - el1.date
@@ -59,7 +60,7 @@ export const TransactionsList: FC<Props> = ({ ticker = "" }) => {
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
-                            <TableCell>Account</TableCell>
+                            {!disableAccountsColumn && <TableCell>Account</TableCell>}
                             <TableCell>Ticker</TableCell>
                             <TableCell>Amount</TableCell>
                             <TableCell>Price</TableCell>
@@ -82,9 +83,9 @@ export const TransactionsList: FC<Props> = ({ ticker = "" }) => {
                                 key={stock.id}
                             >
                                 <TableCell>{format(new Date(stock.date), 'dd-MM-Y')}</TableCell>
-                                <TableCell>
+                                {!disableAccountsColumn && <TableCell>
                                     {accounts.find(el => el.id === stock.account)?.name || "Unknown"}
-                                </TableCell>
+                                </TableCell>}
                                 <TableCell>{stock.ticker}</TableCell>
                                 <TableCell>{stock.amount}</TableCell>
                                 <TableCell><StockPrice stock={stock} /></TableCell>

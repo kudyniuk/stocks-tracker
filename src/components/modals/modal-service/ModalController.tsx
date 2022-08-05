@@ -22,7 +22,7 @@ export const ModalController: FC = () => {
         aria-describedby="modal-modal-description"
     >
         <Box sx={style}>
-            <ModalBody {...props} close={handleClose} />
+            <ModalBody {...props} close={() => dispatch(closeModal())} />
         </Box>
     </Modal>
 }

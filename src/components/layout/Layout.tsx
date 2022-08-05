@@ -1,10 +1,11 @@
 import { FC, ReactNode, useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
-import { Box } from "@mui/material";
+import { Box, Breadcrumbs, Link, Typography } from "@mui/material";
 import { Navbar } from "./Navbar";
 import { Sidebar } from "./Sidebar";
 import { useLocation } from "react-router-dom";
 import { ModalController } from "../modals/modal-service";
+import { Breadcrubs } from "./Breadcrumbs";
 
 type Props = {
     children: ReactNode
@@ -30,6 +31,7 @@ export const Layout: FC<Props> = ({ children }) => {
 
     return <>
         <LayoutRoot>
+
             <Box
                 sx={{
                     display: 'flex',
@@ -38,12 +40,13 @@ export const Layout: FC<Props> = ({ children }) => {
                     width: '100%'
                 }}
             >
+                {/* <Breadcrubs/> */}
                 {children}
             </Box>
         </LayoutRoot >
         <Navbar onSidebarOpen={() => setSidebarOpen(true)} />
         <Sidebar onClose={() => setSidebarOpen(false)}
             open={isSidebarOpen} />
-        <ModalController/>
+        <ModalController />
     </>
 }
