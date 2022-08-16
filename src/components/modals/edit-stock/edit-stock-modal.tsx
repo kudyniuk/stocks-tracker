@@ -19,16 +19,25 @@ type FormData = {
     fee: string
 }
 
-// type Props = {type: "ADD"} | {type: "EDIT", id: string}
 
-export const { openEditStockModal } = createModal<'editStock', { id: string }>({
+// TODO: Clean the types 
+type AddProps = {type: "ADD", defaultAccount?: string}
+type EditProps = {type: "EDIT", id: string}
+type OptionalProps = Partial<Omit<AddProps, 'type'> & Omit<EditProps, 'type'>> & {type: "ADD" | "EDIT"}
+
+type Props = AddProps | EditProps
+
+export const { openEditStockModal } = createModal<'editStock', Props>({
     id: 'editStock',
     options: {
         notCloseOnClickOutside: true
     },
-    component: ({ id, close }) => {
+    component: ({close, ...props}) => {
+        const { id = '', defaultAccount } = props as OptionalProps
+
         const stock = useAppSelector(selectStockById(id))
         const accounts = useAppSelector(state => state.accounts)
+
         const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
             defaultValues: {
                 amount: stock?.amount.toString(),
@@ -41,12 +50,6 @@ export const { openEditStockModal } = createModal<'editStock', { id: string }>({
         const uuid = useUUID()
         const isAdd = !stock
         const date = format(stock?.date ? new Date(stock?.date) : new Date(), 'Y-MM-dd')
-
-        console.log("Date", date)
-        const handleSave = async () => {
-            // await deleteDoc(doc(db, 'user_data', userUUID, 'stocks', stockId))
-            close()
-        }
 
         const onSubmit = (data: FormData) => {
             const stockData: Omit<StockTransaction, 'id'> = {
@@ -67,7 +70,7 @@ export const { openEditStockModal } = createModal<'editStock', { id: string }>({
                 {isAdd ? "Add Stock" : "Edit Stock"}
             </Typography>
             <Stack component="form" direction="column" spacing={2} onSubmit={handleSubmit(onSubmit)}>
-                <TextField select label="Account" variant="standard" defaultValue={stock?.account} {...register('account')} sx={{ minWidth: '200px' }} >
+                <TextField select label="Account" variant="standard" defaultValue={defaultAccount || stock?.account} {...register('account')} sx={{ minWidth: '200px' }} >
                     {accounts.map((account, i) => <MenuItem key={account.name} value={account.id}>{account.name}</MenuItem>)}
                 </TextField>
 
@@ -77,7 +80,7 @@ export const { openEditStockModal } = createModal<'editStock', { id: string }>({
                 </Stack>
 
                 <Stack direction='row' spacing={2}>
-                    <TextField sx={{ width: "100%" }} id="outlined-basic-3" label="Price" variant="standard" type="number" inputProps={{ step: "0.01" }} defaultValue={stock?.price}  {...register("price")} />
+                    <TextField sx={{ width: "100%" }} id="outlined-basic-3" label="Price" variant="standard" type="number" inputProps={{ step: "0.001" }} defaultValue={stock?.price}  {...register("price")} />
                     <TextField sx={{ width: "100%" }} id="outlined-basic-4" label="Fee" variant="standard" type="number" inputProps={{ step: "0.01" }} defaultValue={stock?.fee} {...register("fee")} />
                 </Stack>
 

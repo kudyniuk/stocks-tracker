@@ -96,7 +96,7 @@ export const TransactionsList: FC<Props> = ({ ticker = "" }) => {
                                     <StockTotalPrice stock={stock} />
                                 </TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => dispatch(openEditStockModal({id: stock.id}))}>
+                                    <IconButton onClick={() => dispatch(openEditStockModal({type: "EDIT", id: stock.id}))}>
                                         <Edit />
                                     </IconButton>
                                     <IconButton onClick={() => dispatch(openDeleteStockModal({stockId: stock.id}))}>

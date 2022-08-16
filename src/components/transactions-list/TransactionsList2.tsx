@@ -23,6 +23,7 @@ import { StockTotalPrice } from '../stock-list/StockTotalPrice';
 import { openEditStockModal } from '../modals/edit-stock/edit-stock-modal';
 import { openDeleteStockModal } from '../modals/delete-stock/delete-stock-modal';
 import { Stock } from '../../store';
+import { Add } from '@mui/icons-material';
 
 type Props = {
     stocks: Stock[]
@@ -38,9 +39,14 @@ export const TransactionsList2: FC<Props> = ({ stocks, disableAccountsColumn }) 
         : el2.date - el1.date
     )
     const accounts = useAppSelector(state => state.accounts)
+    const defaultAccount = stocks[0]?.account
 
     return <Card>
-        <CardHeader title="Transactions History" sx={{ p: 2 }} />
+        <CardHeader title="Transactions History" action={
+          <IconButton aria-label="add" onClick={() => dispatch(openEditStockModal({type: "ADD", defaultAccount}))}>
+            <Add />
+          </IconButton>
+        } sx={{ p: 2 }} />
         <PerfectScrollbar>
             <Box sx={{ minWidth: 800 }}>
                 <Table size='small'>
@@ -97,7 +103,7 @@ export const TransactionsList2: FC<Props> = ({ stocks, disableAccountsColumn }) 
                                     <StockTotalPrice stock={stock} />
                                 </TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => dispatch(openEditStockModal({id: stock.id}))}>
+                                    <IconButton onClick={() => dispatch(openEditStockModal({type: "EDIT", id: stock.id}))}>
                                         <Edit />
                                     </IconButton>
                                     <IconButton onClick={() => dispatch(openDeleteStockModal({stockId: stock.id}))}>
